@@ -33,12 +33,16 @@ inputs:
     description: 'Use yarn to build'
     required: false
     default: false
+  frozenlockfile:
+    description: 'Use frozen lockfile'
+    required: false
+    default: true
 runs:
   using: "composite"
   steps:
       - name: Build Vue
         run: |
-              if [ true ==  ${{ inputs.useyarn }} ]; then yarn install --frozen-lockfile; else npm ci; fi
+              if [ true ==  ${{ inputs.useyarn }} && true == ${{ inputs.frozenlockfile }} ]; then yarn install --frozen-lockfile; elif [ true ==  ${{ inputs.useyarn }} && false == ${{ inputs.frozenlockfile }} ]; then yarn install; elif [ false ==  ${{ inputs.useyarn }} && true == ${{ inputs.frozenlockfile }} ]; then npm ci; else; npm install fi
               if [ true ==  ${{ inputs.useyarn }} ]; then yarn build; else npm run build; fi
               cd dist
               ln -s index.html 404.html
